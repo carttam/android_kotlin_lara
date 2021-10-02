@@ -11,7 +11,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val postLoader : PostLoader = PostLoader(this,this.findViewById(R.id.recyclerview), Volley.newRequestQueue(this))
+        val postLoader: PostLoader = PostLoader(
+            this,
+            this.findViewById(R.id.recyclerview),
+            Volley.newRequestQueue(this),
+            "http://192.168.1.101/lara/public/"
+        )
         postLoader.Load()
 
     }

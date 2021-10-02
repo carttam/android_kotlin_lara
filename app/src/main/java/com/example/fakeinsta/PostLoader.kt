@@ -15,54 +15,64 @@ import com.google.android.material.snackbar.Snackbar
 import org.json.JSONArray
 import org.json.JSONObject
 
-class PostLoader(private val context: Context,private val recyclerview: RecyclerView,private val q : RequestQueue) {
+class PostLoader(
+    private val context: Context,
+    private val recyclerview: RecyclerView,
+    private val q: RequestQueue,
+    private val url: String
+) {
 
-        public fun Load()
-        {
-            val req = JsonObjectRequest(
-                Request.Method.POST,
-                "http://192.168.1.101/lara/public/api",
-                null,
-                this::onResponse,
-                Response.ErrorListener { error -> Snackbar.make(recyclerview,error.message.toString(),5000).show() }
-            )
+    public fun Load() {
+        val req = JsonObjectRequest(
+            Request.Method.POST,
+            url + "api",
+            null,
+            this::onResponse,
+            Response.ErrorListener { error ->
+                Snackbar.make(
+                    recyclerview,
+                    error.message.toString(),
+                    5000
+                ).show()
+            }
+        )
 
-            q.add(req)
-        }
+        q.add(req)
+    }
 
-        private fun onResponse(response: JSONObject)
-        {
-            val dataSet = mutableListOf<Post>()
-            val data = response.getJSONArray("data")
-            for (i in 0 until data.length())
-            {
-                val post = data.getJSONObject(i)
+    private fun onResponse(response: JSONObject) {
+        val dataSet = mutableListOf<Post>()
+        val data = response.getJSONArray("data")
+        for (i in 0 until data.length()) {
+            val post = data.getJSONObject(i)
 
-                dataSet.add(Post(
+            dataSet.add(
+                Post(
                     post.getInt("id"),
                     post.getString("description"),
                     post.getInt("user_id"),
                     post.getString("file_name"),
                     post.getString("file_type"),
                     post.getString("full_name")
-                ))
+                )
+            )
 
-            }
-
-            val imageLoader = ImageLoader(q,
-                object : ImageLoader.ImageCache {
-                    private val cache: LruCache<String, Bitmap> = LruCache<String, Bitmap>(20)
-                    override fun getBitmap(url: String): Bitmap? {
-                        return cache.get(url)
-                    }
-
-                    override fun putBitmap(url: String, bitmap: Bitmap) {
-                        cache.put(url, bitmap)
-                    }
-                })
-
-            val postAdapter : PostAdapter = PostAdapter(dataSet,q,imageLoader)
-            recyclerview.adapter = postAdapter
-            recyclerview.layoutManager = LinearLayoutManager(context)
         }
+
+        val imageLoader = ImageLoader(q,
+            object : ImageLoader.ImageCache {
+                private val cache: LruCache<String, Bitmap> = LruCache<String, Bitmap>(20)
+                override fun getBitmap(url: String): Bitmap? {
+                    return cache.get(url)
+                }
+
+                override fun putBitmap(url: String, bitmap: Bitmap) {
+                    cache.put(url, bitmap)
+                }
+            })
+
+        val postAdapter: PostAdapter = PostAdapter(context, dataSet, imageLoader, url)
+        recyclerview.adapter = postAdapter
+        recyclerview.layoutManager = LinearLayoutManager(context)
+    }
 }
