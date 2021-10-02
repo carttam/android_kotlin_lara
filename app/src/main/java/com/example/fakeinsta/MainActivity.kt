@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
             Volley.newRequestQueue(this),
             "http://192.168.1.101/lara/public/"
         )
+        // TODO : Add Paginate to App
         postLoader.Load()
 
     }
