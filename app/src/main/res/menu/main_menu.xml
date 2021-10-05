@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/account_menu"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:title="@string/account">
+
+            <menu
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:layoutDirection="rtl">
+                <item
+                    android:id="@+id/login_menu"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:title="@string/login" />
+                <item
+                    android:id="@+id/logout_menu"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:title="@string/logout" />
+            </menu>
+
+        </item>
+    </group>
+</menu>

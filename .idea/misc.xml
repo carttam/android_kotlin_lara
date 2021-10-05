@@ -5,9 +5,12 @@
       <map>
         <entry key="app/src/main/res/drawable/border.xml" value="0.34739583333333335" />
         <entry key="app/src/main/res/layout/activity_comment.xml" value="0.33125" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33125" />
         <entry key="app/src/main/res/layout/single_comment.xml" value="0.33125" />
         <entry key="app/src/main/res/layout/single_post.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/toolbar.xml" value="0.33125" />
+        <entry key="app/src/main/res/menu/main_menu.xml" value="0.33125" />
       </map>
     </option>
   </component>
