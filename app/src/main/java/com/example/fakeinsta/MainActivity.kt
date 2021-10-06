@@ -1,20 +1,37 @@
 package com.example.fakeinsta
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val url = "http://192.168.1.101/lara/public/"
+    private var recyclerview: RecyclerView? = null
+    private var q: RequestQueue? = null
+    private var token: String? = null
+    private var nav: NavigationView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        recyclerview = findViewById(R.id.recyclerview)
+        q = Volley.newRequestQueue(this)
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         setUpToolbar()
         setUpRecyclerView()
     }
@@ -22,16 +39,43 @@ class MainActivity : AppCompatActivity() {
     private fun setUpRecyclerView() {
         val postLoader: PostLoader = PostLoader(
             this,
-            this.findViewById(R.id.recyclerview),
-            Volley.newRequestQueue(this),
+            this.recyclerview!!,
+            q!!,
             url
         )
         // TODO : Add Paginate to App.
         postLoader.Load()
     }
 
+    override fun onResume() {
+        super.onResume()
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
+        nav = findViewById<NavigationView>(R.id.navigation)
+        isLogin { response ->
+            setUpLoginToolbar(response.getString("full_name"))
+        }
+    }
+
+    private fun setUpLoginToolbar(full_name: String) {
+        nav!!.menu.findItem(R.id.account_menu).title = full_name
+        nav!!.menu.findItem(R.id.login_menu).isVisible = false
+        nav!!.menu.findItem(R.id.logout_menu).isVisible = true
+    }
+
+    private fun setUpLogOutToolbar() {
+        nav!!.menu.findItem(R.id.account_menu).title =
+            applicationContext.resources.getString(R.string.account)
+        nav!!.menu.findItem(R.id.login_menu).isVisible = true
+        nav!!.menu.findItem(R.id.logout_menu).isVisible = false
+    }
+
     private fun setUpToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        nav = findViewById<NavigationView>(R.id.navigation)
+        nav!!.setNavigationItemSelectedListener(this)
+        isLogin { response ->
+            setUpLoginToolbar(response.getString("full_name"))
+        }
         setSupportActionBar(toolbar)
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         this.supportActionBar?.setHomeButtonEnabled(true)
@@ -46,28 +90,81 @@ class MainActivity : AppCompatActivity() {
         ).syncState()
     }
 
-    private fun isLogin(): Boolean {
-        return true
+    private fun isLogin(funDo: (respnse: JSONObject) -> Unit) {
+        if (token === "null")
+            return
+        val req: JsonObjectRequest = object : JsonObjectRequest(
+            Request.Method.POST,
+            url + "api/isLogin",
+            null,
+            Response.Listener { response ->
+                funDo(response)
+            },
+            Response.ErrorListener { error ->
+                Snackbar.make(
+                    recyclerview!!,
+                    "Login Error Happened !",
+                    6000
+                ).show()
+            }
+        ) {
+
+            @Throws(AuthFailureError::class)
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers.put("Content-Type", "application/json")
+                headers.put("Authorization", "Bearer " + token!!)
+                return headers
+            }
+
+        }
+        q!!.add(req)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.main_menu, menu)
+    private fun logOut() {
+        val req: JsonObjectRequest = object : JsonObjectRequest(
+            Request.Method.POST,
+            url + "api/logout",
+            null,
+            { response ->
+                Snackbar.make(
+                    recyclerview!!,
+                    if (response.isNull("status")) response.getString("message") else response.getString(
+                        "status"
+                    ),
+                    6000
+                ).show()
+                applicationContext.getSharedPreferences("login", 0).edit().remove("token").apply()
+                setUpLogOutToolbar()
+            },
+            { error -> Snackbar.make(recyclerview!!, error.message.toString(), 6000).show() }
+        ) {
 
-//        if (isLogin())
-//        {
-//            menu?.findItem(R.id.logout_menu)?.isVisible = true
-//            menu?.findItem(R.id.login_menu)?.isVisible = false
-//        }
-//        else
-//        {
-//            menu?.findItem(R.id.logout_menu)?.isVisible = false
-//            menu?.findItem(R.id.login_menu)?.isVisible = true
-//        }
-        return true
+            @Throws(AuthFailureError::class)
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers.put("Content-Type", "application/json")
+                headers.put("Authorization", "Bearer " + token!!)
+                return headers
+            }
+
+        }
+
+        q!!.add(req)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return true
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.login_menu -> {
+                startActivity(Intent(this, LoginActivity::class.java))
+                true
+            }
+            R.id.logout_menu -> {
+                logOut()
+                true
+            }
+            else -> false
+        }
     }
 
 }

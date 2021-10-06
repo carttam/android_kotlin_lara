@@ -20,6 +20,7 @@
                     android:id="@+id/logout_menu"
                     android:layout_gravity="end"
                     android:gravity="end"
+                    android:visible="false"
                     android:title="@string/logout" />
             </menu>
 

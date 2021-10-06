@@ -2,8 +2,6 @@ package com.example.fakeinsta
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.view.View
-import android.widget.Toast
 import androidx.collection.LruCache
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +10,6 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.*
 import com.google.android.material.snackbar.Snackbar
-import org.json.JSONArray
 import org.json.JSONObject
 
 class PostLoader(

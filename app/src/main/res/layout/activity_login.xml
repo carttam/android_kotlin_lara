@@ -5,7 +5,8 @@
     tools:context=".LoginActivity"
     android:background="#ffBE80FF"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:id="@+id/login_activity_main">
 
     <LinearLayout
         android:id="@+id/ll1"

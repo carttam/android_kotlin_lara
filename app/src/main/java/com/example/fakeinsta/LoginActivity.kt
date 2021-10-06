@@ -3,8 +3,10 @@ package com.example.fakeinsta
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -22,7 +24,9 @@ class LoginActivity : AppCompatActivity() {
         val email = findViewById<AutoCompleteTextView>(R.id.email_auto_complete_text)
         val password = findViewById<EditText>(R.id.password_edit_text)
 
-        logIn(email.text.toString(), password.text.toString())
+        findViewById<Button>(R.id.sign_in_button).setOnClickListener {
+            logIn(email.text.toString(), password.text.toString())
+        }
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -37,21 +41,22 @@ class LoginActivity : AppCompatActivity() {
         val req = JsonObjectRequest(
             Request.Method.POST,
             url + "api/login",
-            null,
+            jobj,
             { response ->
                 val status = response.getString("status")
                 val message = response.getString("message")
-                if (status === "success") {
+                if (status == "success") {
                     val editor = applicationContext.getSharedPreferences("login", 0).edit()
                     editor.putString("token", response.getString("token"))
                     editor.apply()
                     finish()
                 } else {
-                    Snackbar.make(view, message, 6000).show()
+                    Snackbar.make(findViewById(R.id.login_activity_main), message, 6000).show()
                 }
             },
             { error -> Snackbar.make(view, error.message.toString(), 6000).show() }
         )
 
+        q.add(req)
     }
 }
