@@ -20,11 +20,48 @@ class PostLoader(
 ) {
 
     public fun Load() {
+
         val req = JsonObjectRequest(
             Request.Method.POST,
             url + "api",
             null,
             this::onResponse,
+            Response.ErrorListener { error ->
+                Snackbar.make(
+                    recyclerview,
+                    error.message.toString(),
+                    5000
+                ).show()
+            }
+        )
+
+        q.add(req)
+    }
+
+    public fun loadNextPage(Curl: String, postAdapter: PostAdapter) {
+        val req = JsonObjectRequest(
+            Request.Method.POST,
+            Curl,
+            null,
+            { response ->
+                val data = response.getJSONArray("data")
+                for (i in 0 until data.length()) {
+                    val post = data.getJSONObject(i)
+
+                    postAdapter.dataSet.add(
+                        Post(
+                            post.getInt("id"),
+                            post.getString("description"),
+                            post.getInt("user_id"),
+                            post.getString("file_name"),
+                            post.getString("file_type"),
+                            post.getString("full_name")
+                        )
+                    )
+
+                }
+                postAdapter.nextPage = response.getString("next_page_url")
+            },
             Response.ErrorListener { error ->
                 Snackbar.make(
                     recyclerview,
@@ -68,7 +105,14 @@ class PostLoader(
                 }
             })
 
-        val postAdapter: PostAdapter = PostAdapter(context, dataSet, imageLoader, url)
+        val postAdapter: PostAdapter = PostAdapter(
+            context,
+            dataSet,
+            response.getString("next_page_url"),
+            imageLoader,
+            url,
+            this
+        )
         recyclerview.adapter = postAdapter
         recyclerview.layoutManager = LinearLayoutManager(context)
     }

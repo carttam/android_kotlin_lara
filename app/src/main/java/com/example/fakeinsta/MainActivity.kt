@@ -29,6 +29,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onResume() {
+        super.onResume()
         recyclerview = findViewById(R.id.recyclerview)
         q = Volley.newRequestQueue(this)
         token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
@@ -37,23 +41,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setUpRecyclerView() {
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         val postLoader: PostLoader = PostLoader(
             this,
             this.recyclerview!!,
             q!!,
-            url
+            url,
         )
-        // TODO : Add Paginate to App.
         postLoader.Load()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
-        nav = findViewById<NavigationView>(R.id.navigation)
-        isLogin { response ->
-            setUpLoginToolbar(response.getString("full_name"))
-        }
     }
 
     private fun setUpLoginToolbar(full_name: String) {
@@ -73,7 +68,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         nav = findViewById<NavigationView>(R.id.navigation)
         nav!!.setNavigationItemSelectedListener(this)
-        isLogin { response ->
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
+        Login.login.isLogin(token!!, url, recyclerview!!, q!!) { response ->
             setUpLoginToolbar(response.getString("full_name"))
         }
         setSupportActionBar(toolbar)
@@ -88,37 +84,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             0,
             0
         ).syncState()
-    }
-
-    private fun isLogin(funDo: (respnse: JSONObject) -> Unit) {
-        if (token === "null")
-            return
-        val req: JsonObjectRequest = object : JsonObjectRequest(
-            Request.Method.POST,
-            url + "api/isLogin",
-            null,
-            Response.Listener { response ->
-                funDo(response)
-            },
-            Response.ErrorListener { error ->
-                Snackbar.make(
-                    recyclerview!!,
-                    "Login Error Happened !",
-                    6000
-                ).show()
-            }
-        ) {
-
-            @Throws(AuthFailureError::class)
-            override fun getHeaders(): Map<String, String> {
-                val headers = HashMap<String, String>()
-                headers.put("Content-Type", "application/json")
-                headers.put("Authorization", "Bearer " + token!!)
-                return headers
-            }
-
-        }
-        q!!.add(req)
     }
 
     private fun logOut() {
@@ -143,8 +108,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             @Throws(AuthFailureError::class)
             override fun getHeaders(): Map<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Content-Type", "application/json")
-                headers.put("Authorization", "Bearer " + token!!)
+                headers["Content-Type"] = "application/json"
+                headers["Authorization"] = "Bearer " + token!!
                 return headers
             }
 

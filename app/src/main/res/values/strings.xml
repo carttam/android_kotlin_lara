@@ -8,6 +8,7 @@
     <string name="prompt_email">ایمیل</string>
     <string name="prompt_password">پسورد</string>
     <string name="action_sign_in">ورود</string>
+    <string name="send">ارسال</string>
     <string name="invalid_email">This email address is invalid</string>
     <string name="invalid_password">Password is too short</string>
     <string name="incorrect_password">Password is incorrect</string>
