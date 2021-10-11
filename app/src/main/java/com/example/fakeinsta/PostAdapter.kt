@@ -25,6 +25,8 @@ class PostAdapter(
 ) :
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
+    var size = dataSet.size
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -72,7 +74,7 @@ class PostAdapter(
             context.startActivity(intent)
         }
         // set pagination
-        if ((position + 1) == dataSet.size && nextPage != "null")
+        if ((position + 2) == dataSet.size && nextPage != "null")
         {
             postLoader.loadNextPage(nextPage!!,this)
         }
