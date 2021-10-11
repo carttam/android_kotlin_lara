@@ -29,15 +29,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        q = Volley.newRequestQueue(this)
+        recyclerview = findViewById(R.id.recyclerview)
+        setUpToolbar()
+        setUpRecyclerView()
+
     }
 
     override fun onResume() {
         super.onResume()
+
         recyclerview = findViewById(R.id.recyclerview)
         q = Volley.newRequestQueue(this)
-        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         setUpToolbar()
-        setUpRecyclerView()
+
     }
 
     private fun setUpRecyclerView() {
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setUpToolbar() {
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         nav = findViewById<NavigationView>(R.id.navigation)
         nav!!.setNavigationItemSelectedListener(this)

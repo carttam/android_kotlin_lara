@@ -61,6 +61,7 @@ class PostLoader(
 
                 }
                 postAdapter.nextPage = response.getString("next_page_url")
+                postAdapter.notifyDataSetChanged()
             },
             Response.ErrorListener { error ->
                 Snackbar.make(

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.NetworkImageView
+import com.google.android.material.snackbar.Snackbar
 
 
 class PostAdapter(
@@ -74,7 +75,7 @@ class PostAdapter(
             context.startActivity(intent)
         }
         // set pagination
-        if ((position + 2) == dataSet.size && nextPage != "null")
+        if ((position + 1) == dataSet.size && nextPage != "null")
         {
             postLoader.loadNextPage(nextPage!!,this)
         }
