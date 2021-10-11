@@ -2,18 +2,14 @@ package com.example.fakeinsta
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.NetworkImageView
-import com.google.android.material.snackbar.Snackbar
 
 
 class PostAdapter(
@@ -25,8 +21,6 @@ class PostAdapter(
     private val postLoader: PostLoader
 ) :
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
-
-    var size = dataSet.size
 
     /**
      * Provide a reference to the type of views that you are using
@@ -67,7 +61,7 @@ class PostAdapter(
         viewHolder.description.text =
             if (dataSet[position].description === "null") "" else dataSet[position].description
         // set onClickListener for comment button
-        viewHolder.comment_button.setOnClickListener() {
+        viewHolder.comment_button.setOnClickListener {
             val intent: Intent = Intent(context, CommentActivity::class.java).apply {
                 putExtra("id", dataSet[position].id)
                 putExtra("url", url)
