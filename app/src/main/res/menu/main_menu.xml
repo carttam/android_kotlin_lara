@@ -17,6 +17,12 @@
                     android:gravity="end"
                     android:title="@string/login" />
                 <item
+                    android:id="@+id/share_post"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:visible="false"
+                    android:title="@string/add_post" />
+                <item
                     android:id="@+id/logout_menu"
                     android:layout_gravity="end"
                     android:gravity="end"

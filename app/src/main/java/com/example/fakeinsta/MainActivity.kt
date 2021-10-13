@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav!!.menu.findItem(R.id.account_menu).title = full_name
         nav!!.menu.findItem(R.id.login_menu).isVisible = false
         nav!!.menu.findItem(R.id.logout_menu).isVisible = true
+        nav!!.menu.findItem(R.id.share_post).isVisible = true
     }
 
     private fun setUpLogOutToolbar() {
@@ -68,10 +69,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             applicationContext.resources.getString(R.string.account)
         nav!!.menu.findItem(R.id.login_menu).isVisible = true
         nav!!.menu.findItem(R.id.logout_menu).isVisible = false
+        nav!!.menu.findItem(R.id.share_post).isVisible = false
     }
 
     private fun setUpToolbar() {
-        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         nav = findViewById<NavigationView>(R.id.navigation)
         nav!!.setNavigationItemSelectedListener(this)
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setUpLoginToolbar(response.getString("full_name"))
         }
         setSupportActionBar(toolbar)
+         // TODO : fix back from AddPostActivity home button
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         this.supportActionBar?.setHomeButtonEnabled(true)
         // Set up Drawer
@@ -127,12 +129,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            // login menu item
             R.id.login_menu -> {
                 startActivity(Intent(this, LoginActivity::class.java))
                 true
             }
+            // log out from account
             R.id.logout_menu -> {
                 logOut()
+                true
+            }
+            // add post
+            R.id.share_post -> {
+                startActivity(Intent(this, AddPostActivity::class.java).putExtra("url",url))
                 true
             }
             else -> false
