@@ -21,7 +21,7 @@ import org.json.JSONObject
 
 class CommentActivity : AppCompatActivity() {
     var recyclerView: RecyclerView? = null
-    var q: RequestQueue? = null
+    private var q: RequestQueue? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
@@ -41,12 +41,12 @@ class CommentActivity : AppCompatActivity() {
         val post_id = intent.extras!!.getInt("id")
         val token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         q = Volley.newRequestQueue(this)
-        Login.login.isLogin(
+        Login.isLogin(
             token!!,
             url!!,
             cm_btn_linearL,
             q!!
-        ) { response ->
+        ) {
             cm_btn_linearL.isVisible = true
             comment_button.setOnClickListener {
                 addCm(
@@ -84,22 +84,21 @@ class CommentActivity : AppCompatActivity() {
                 Request.Method.GET,
                 url + "home/getComments/" + id.toString(),
                 null,
-                this::onResponse,
-                Response.ErrorListener { error ->
-                    Snackbar.make(
-                        recyclerView!!,
-                        error.message.toString(),
-                        6000
-                    ).show()
-                }
-            )
+                this::onResponse
+            ) { error ->
+                Snackbar.make(
+                    recyclerView!!,
+                    error.message.toString(),
+                    6000
+                ).show()
+            }
             q!!.add(req)
         }
     }
 
     private fun addCm(post_id: Int, comment: String, url: String, token: String) {
         val req = object : JsonObjectRequest(
-            Request.Method.POST,
+            Method.POST,
             url + "api/addComment",
             JSONObject().put("comment", comment).put("post_id", post_id),
             { response ->

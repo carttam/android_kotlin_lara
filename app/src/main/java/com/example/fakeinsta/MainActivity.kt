@@ -9,14 +9,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val url = "http://192.168.1.101/lara/public/"
@@ -42,19 +39,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         recyclerview = findViewById(R.id.recyclerview)
         q = Volley.newRequestQueue(this)
-        setUpToolbar()
+        checkLogin()
 
     }
 
     private fun setUpRecyclerView() {
         token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
-        val postLoader: PostLoader = PostLoader(
+        PostLoader(
             this,
             this.recyclerview!!,
             q!!,
             url,
-        )
-        postLoader.Load()
+        ).Load()
     }
 
     private fun setUpLoginToolbar(full_name: String) {
@@ -74,14 +70,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setUpToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        nav = findViewById<NavigationView>(R.id.navigation)
+        nav = findViewById(R.id.navigation)
         nav!!.setNavigationItemSelectedListener(this)
         token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
-        Login.login.isLogin(token!!, url, recyclerview!!, q!!) { response ->
-            setUpLoginToolbar(response.getString("full_name"))
-        }
+        checkLogin()
         setSupportActionBar(toolbar)
-         // TODO : fix back from AddPostActivity home button
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         this.supportActionBar?.setHomeButtonEnabled(true)
         // Set up Drawer
@@ -95,9 +88,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ).syncState()
     }
 
+    private fun checkLogin() {
+        Login.isLogin(token!!, url, recyclerview!!, q!!) { response ->
+            setUpLoginToolbar(response.getString("full_name"))
+        }
+    }
+
     private fun logOut() {
         val req: JsonObjectRequest = object : JsonObjectRequest(
-            Request.Method.POST,
+            Method.POST,
             url + "api/logout",
             null,
             { response ->
@@ -141,7 +140,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             // add post
             R.id.share_post -> {
-                startActivity(Intent(this, AddPostActivity::class.java).putExtra("url",url))
+                startActivity(Intent(this, AddPostActivity::class.java).putExtra("url", url))
                 true
             }
             else -> false

@@ -1,5 +1,6 @@
 package com.example.fakeinsta
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.collection.LruCache
@@ -19,26 +20,26 @@ class PostLoader(
     private val url: String
 ) {
 
-    public fun Load() {
+    fun Load() {
 
         val req = JsonObjectRequest(
             Request.Method.POST,
             url + "api",
             null,
-            this::onResponse,
-            Response.ErrorListener { error ->
-                Snackbar.make(
-                    recyclerview,
-                    error.message.toString(),
-                    5000
-                ).show()
-            }
-        )
+            this::onResponse
+        ) { error ->
+            Snackbar.make(
+                recyclerview,
+                error.message.toString(),
+                5000
+            ).show()
+        }
 
         q.add(req)
     }
 
-    public fun loadNextPage(Curl: String, postAdapter: PostAdapter) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadNextPage(Curl: String, postAdapter: PostAdapter) {
         val req = JsonObjectRequest(
             Request.Method.POST,
             Curl,
@@ -63,7 +64,7 @@ class PostLoader(
                 postAdapter.nextPage = response.getString("next_page_url")
                 postAdapter.notifyDataSetChanged()
             },
-            Response.ErrorListener { error ->
+            { error ->
                 Snackbar.make(
                     recyclerview,
                     error.message.toString(),
@@ -106,7 +107,7 @@ class PostLoader(
                 }
             })
 
-        val postAdapter: PostAdapter = PostAdapter(
+        val postAdapter = PostAdapter(
             context,
             dataSet,
             response.getString("next_page_url"),

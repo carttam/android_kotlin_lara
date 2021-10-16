@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -16,10 +15,8 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
@@ -56,15 +53,15 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun sendPost() {
         val token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
-        val baos = ByteArrayOutputStream()
-        imageB!!.compress(Bitmap.CompressFormat.JPEG,100,baos)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        imageB!!.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream)
         val req = object : JsonObjectRequest(
-            Request.Method.POST,
+            Method.POST,
             intent.extras!!.getString("url") + "api/addPost",
             JSONObject().put(
                 "description",
                 findViewById<EditText>(R.id.description_text_view).text.toString()
-            ).put("file",Base64.encodeToString(baos.toByteArray(),Base64.DEFAULT)),
+            ).put("file",Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT)),
             Response.Listener { response ->
                 Snackbar.make(
                     findViewById(R.id.main_linearLayout),

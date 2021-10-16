@@ -2,16 +2,14 @@ package com.example.fakeinsta
 
 import android.view.View
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
 
 class Login {
     companion object login {
-        public fun isLogin(
+        fun isLogin(
             token: String,
             url: String,
             view: View,
@@ -21,7 +19,7 @@ class Login {
             if (token === "null")
                 return
             val req: JsonObjectRequest = object : JsonObjectRequest(
-                Request.Method.POST,
+                Method.POST,
                 url + "api/isLogin",
                 null,
                 Response.Listener { response ->
@@ -45,7 +43,7 @@ class Login {
                 }
 
             }
-            q!!.add(req)
+            q.add(req)
         }
     }
 }

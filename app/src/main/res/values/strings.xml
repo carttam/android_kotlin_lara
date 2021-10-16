@@ -1,7 +1,7 @@
 <resources>
     <!-- Strings related to main_menu -->
     <string name="app_name">fakeInsta</string>
-    <string name="do.comment">نظر دهید ...</string>
+    <string name="do.comment">نظر دهید …</string>
     <string name="account">حساب کاربری</string>
     <string name="add_post">اشتراک پست</string>
     <string name="login">ورود به حساب</string>
@@ -14,6 +14,6 @@
     <!-- Strings related to add_post -->
     <string name="select_image">انتخاب تصویر</string>
     <string name="enter_description">عنوان پست</string>
-    <string name="description_text">توضیحات ...</string>
-    <string name="select_image_description">selected image</string>
+    <string name="description_text">توضیحات …</string>
+    <string name="select_image_description">تصویر پست</string>
 </resources>

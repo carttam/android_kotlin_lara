@@ -7,5 +7,4 @@ class Post(
     var file_name: String,
     var file_type: String,
     var full_name: String
-) {
-}
+)
