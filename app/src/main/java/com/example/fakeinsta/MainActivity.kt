@@ -36,11 +36,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
-
+        token = applicationContext.getSharedPreferences("login", 0).getString("token", "null")
         recyclerview = findViewById(R.id.recyclerview)
         q = Volley.newRequestQueue(this)
         checkLogin()
-
     }
 
     private fun setUpRecyclerView() {
